@@ -107,12 +107,13 @@
 // fetchAsyncTodos();
 
 const container = document.querySelector('#container');
+const todos = document.querySelector('.todos');
 const requestBtn = document.querySelector('.requestBtn');
 
 function todoRequest(todo = prompt('Todo')) {
     const url = `https://jsonplaceholder.typicode.com/todos/${todo}`;
 
-    fetch(url)
+    return fetch(url)
         .then(res => {
             if(res.status !== 200) {
                 throw new Error('No more 200');
@@ -120,7 +121,8 @@ function todoRequest(todo = prompt('Todo')) {
             return res.json();
         })
         .then(data => {
-            container.appendChild(document.createElement('div')).innerHTML = `
+            const requestTodo = todos.appendChild(document.createElement('div'));
+            requestTodo.innerHTML = `
                 <p>Completed: ${data.completed}</p>
                 <p>ID: ${data.id}</p>
                 <p>Title: ${data.title}</p>
@@ -131,3 +133,40 @@ function todoRequest(todo = prompt('Todo')) {
 }
 
 requestBtn.addEventListener('click', () => todoRequest());
+
+function userRequest() {
+    return fetch('https://jsonplaceholder.typicode.com/users')
+        .then(response => response.json())
+        .then(data => {
+            const tables = container.appendChild(document.createElement('div'));
+            tables.classList.add('tables');
+
+            data.forEach((item) => {
+                const userInfo = tables.appendChild(document.createElement('table'));
+
+                userInfo.innerHTML = `
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Website</th>
+                    </tr>
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.username}</td>
+                        <td>${item.email}</td>
+                        <td>${item.address.street}, ${item.address.suite}</td>
+                        <td>${item.phone}</td>
+                        <td>${item.website}</td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(e => console.error(e));
+}
+
+userRequest();
