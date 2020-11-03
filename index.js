@@ -108,7 +108,68 @@
 
 const container = document.querySelector('#container');
 const todos = document.querySelector('.todos');
-const requestBtn = document.querySelector('.requestBtn');
+const requestForm = document.querySelector('.requestForm');
+const requestNumber = document.querySelector('.requestNumber');
+const requestTodo = document.querySelector('.requestTodo');
+
+requestNumber.addEventListener('input', () => {
+    if(Number(requestNumber.value) < 1 || Number(requestNumber.value) > 200) {
+        requestNumber.value = '';
+    }
+});
+
+function createModal(options) {
+    const DEFAULTH_WIDTH = '400px';
+    const modal = document.body.appendChild(document.createElement('div'));
+    modal.classList.add('modal');
+
+    modal.addEventListener('click', event => {
+        if(event.target.dataset.close) {
+            modalMethods(modal).close();
+        }
+    });
+
+    modal.innerHTML = `
+        <div class="modal__overlay" data-close="true">
+            <div class="modal__content" style="width: ${options.width || DEFAULTH_WIDTH}">
+                <div class="modal__header">
+                    <span class="modal__title">${options.title || 'Modal'}</span>
+                    <span class="modal__close" data-close="true">&times;</span>
+                </div>
+                <div class="modal__body" style="color: ${options.color || 'black'};">
+                    ${options.content || ''}
+                </div>
+                <div class="modal__footer">
+                    ${options.footer || `
+                        <button class="modal__ok">OK</button>
+                        <button class="modal__closeBtn" data-close="true">Close</button>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+
+    return modal;
+}
+
+function modalMethods(modal) {
+    return {
+        open() {
+            modal.classList.add('open');
+            document.body.classList.add('overflowHidden');
+        },
+        close() {
+            modal.classList.remove('open');
+            modal.classList.add('hide');
+
+            setTimeout(() => {
+                modal.classList.remove('hide');
+                modal.remove();
+                document.body.classList.remove('overflowHidden');
+            }, 300);
+        }
+    }
+}
 
 function todoRequest(todo = prompt('Todo')) {
     const url = `https://jsonplaceholder.typicode.com/todos/${todo}`;
@@ -121,18 +182,45 @@ function todoRequest(todo = prompt('Todo')) {
             return res.json();
         })
         .then(data => {
-            const requestTodo = todos.appendChild(document.createElement('div'));
-            requestTodo.innerHTML = `
-                <p>Completed: ${data.completed}</p>
-                <p>ID: ${data.id}</p>
-                <p>Title: ${data.title}</p>
-                <p>UserID: ${data.userId}</p>
-            `;
+            const modal = createModal({
+                title: 'To Do',
+                width: '600px',
+                content: `
+                    <p>Completed: ${data.completed}</p>
+                    <p>ID: ${data.id}</p>
+                    <p>Title: ${data.title}</p>
+                    <p>UserID: ${data.userId}</p>
+                `,
+                footer: `
+                    <button class="modal__closeBtn" data-close="true">Close</button>
+                `
+            });
+
+            setTimeout(() => {
+                modalMethods(modal).open(); 
+            }, 1);
+            
+            // const todo = todos.appendChild(document.createElement('div'));
+            // todo.innerHTML = `
+            //     <p>Completed: ${data.completed}</p>
+            //     <p>ID: ${data.id}</p>
+            //     <p>Title: ${data.title}</p>
+            //     <p>UserID: ${data.userId}</p>
+            // `;
         })
         .catch(e => console.error(e));
 }
 
-requestBtn.addEventListener('click', () => todoRequest());
+requestForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if(Number(requestNumber.value) === 0) {
+        requestNumber.value = '';
+    } else {
+        todoRequest(Number(requestNumber.value));
+        requestNumber.value = '';
+    }
+});
 
 function userRequest() {
     return fetch('https://jsonplaceholder.typicode.com/users')

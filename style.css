@@ -19,3 +19,112 @@ th, td {
 th {
     text-align: left;
 }
+
+/*
+*** modal
+*/
+
+.modal__overlay {
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color .3s ease-in-out;
+}
+.modal__content {
+    box-shadow: 0px 0px 10px 1px black;
+    width: 500px;
+    border-radius: 5px;
+    background-color: white;
+    margin: 0 auto;
+    overflow: auto;
+    /* transform: translateY(-150px); */
+    transform: translateY(150px);
+    opacity: 0;
+    transition: transform .3s ease-in-out, opacity .3s ease-in-out;
+}
+
+.overflowHidden {
+    overflow: hidden !important;
+}
+
+.modal.open .modal__overlay,
+.modal.open .modal__content {
+    opacity: 1;
+    z-index: 1000;
+}
+
+.modal.hide .modal__overlay,
+.modal.hide .modal__content {
+    opacity: 1;
+    z-index: 1000;
+}
+
+.modal__overlay,
+.modal__content {
+    z-index: -1;
+    opacity: 0;
+}
+
+.modal.open .modal__content {
+    /* transform: translateY(150px); */
+    opacity: 1;
+}
+
+.modal.open .modal__overlay {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal.hide .modal__content {
+    /* transform: translateY(-150px); */
+    opacity: 0;
+}
+
+.modal.hide .modal__overlay {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.modal__header {
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px;
+}
+.modal__title {
+    font-size: 18px;
+}
+.modal__close {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal__body {
+    padding: 5px 10px;
+    border-top: 1px solid gray;
+}
+
+.modal__footer {
+    padding: 5px 10px;
+    border-top: 1px solid gray;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+.modal__ok {
+    background-color: springgreen;
+    outline: none;
+}
+.modal__closeBtn {
+    background-color: red;
+    outline: none;
+    margin-left: 5px;
+}
+.modal__ok:hover,
+.modal__closeBtn:hover {
+    opacity: 0.9;
+    cursor: pointer;
+}
