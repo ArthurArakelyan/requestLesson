@@ -173,6 +173,8 @@ function modalMethods(modal) {
 
 function todoRequest(todo = prompt('Todo')) {
     const url = `https://jsonplaceholder.typicode.com/todos/${todo}`;
+    const loaderHTML = '<div class="lds-dual-ring loaderForTodo"></div>';
+    container.appendChild(document.createElement('div')).innerHTML = loaderHTML;
 
     return fetch(url)
         .then(res => {
@@ -182,6 +184,7 @@ function todoRequest(todo = prompt('Todo')) {
             return res.json();
         })
         .then(data => {
+            document.querySelector('.lds-dual-ring').remove();
             const modal = createModal({
                 title: 'To Do',
                 width: '600px',
@@ -198,15 +201,7 @@ function todoRequest(todo = prompt('Todo')) {
 
             setTimeout(() => {
                 modalMethods(modal).open(); 
-            }, 1);
-            
-            // const todo = todos.appendChild(document.createElement('div'));
-            // todo.innerHTML = `
-            //     <p>Completed: ${data.completed}</p>
-            //     <p>ID: ${data.id}</p>
-            //     <p>Title: ${data.title}</p>
-            //     <p>UserID: ${data.userId}</p>
-            // `;
+            }, 30);
         })
         .catch(e => console.error(e));
 }
@@ -223,9 +218,13 @@ requestForm.addEventListener('submit', (e) => {
 });
 
 function userRequest() {
+    const loaderHTML = '<div class="lds-dual-ring"></div>';
+    container.appendChild(document.createElement('div')).innerHTML = loaderHTML;
+
     return fetch('https://jsonplaceholder.typicode.com/users')
         .then(response => response.json())
         .then(data => {
+            document.querySelector('.lds-dual-ring').remove();
             const tables = container.appendChild(document.createElement('div'));
             tables.classList.add('tables');
 
